@@ -1,0 +1,27 @@
+# By default the "ticket" you get from sudo lets you sudo again
+# without a password for the `timestamp_timeout` period, but only on
+# that one terminal or window.
+#
+# Disabling `tty_tickets` means that an authentication on any terminal
+# allows you to use sudo without a password on any terminal during
+# that period. (Obviously, this is only useful if a password is
+# required to sudo in the first place.)
+#
+# The typical cases where this is useful are:
+#   1. When administering a host over a network (e.g., via ssh) you
+#      connect multiple times (getting a new pty with each connection)
+#      and you can't or don't want to re-type your sudo password each
+#      time.
+#   2. You're running X11 and want authentication to be valid for all
+#      windows, not just the one in which you authenticated.
+#
+# In general, if you're paranoid enough that you use a pasword to sudo
+# in the first place, you probably don't want this, but it can be
+# essential in certain remote administration situations (point 1
+# above) where you're using a tool such as Ansible that cannot give a
+# password to sudo. In that case you can `ssh -t somehost sudo -v`,
+# type the password, and then run Ansible; when it logs in and tries
+# to sudo it will be able to do so without having your password.
+#
+
+Defaults                    !tty_tickets
