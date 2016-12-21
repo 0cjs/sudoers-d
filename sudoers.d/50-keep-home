@@ -1,0 +1,26 @@
+# Maintain user's $HOME variable when they sudo.
+#
+# Note that this is a bad idea for users not given unrestricted root
+# access since it allows them to change settings of programs that read
+# their configuration from files in $HOME. Thus, we restrict this to
+# users in groups (`wheel` on CentOS, `sudo` on Debian) that normally
+# are given unrestricted root access. (These groups may be different on
+# your system.)
+#
+# For unrestricted users, using their own $HOME is not only more
+# convenient (as they get their own aliases and program configurations)
+# but also safer since it helps avoid unexpected behaviour, committing
+# changes under the wrong name, and so forth.
+#
+# If you need to use the target's home directory as $HOME or the
+# target's environment, you can add the `-H` or `-i` option when you
+# sudo.
+
+Defaults:%wheel,%sudo       !always_set_home
+Defaults:%wheel,%sudo       env_keep += "HOME"
+
+# Handy for those who use Vagrant or Kitchen for testing, since the
+# vagrant user is not added to the wheel/sudo groups.
+#
+Defaults:%vagrant           !always_set_home
+Defaults:%vagrant           env_keep += "HOME"
