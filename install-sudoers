@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#
+#  install-sudoers - install a sudoers file
+#
+#  Given a filename, this attempts to install it as a sudoers file in
+#  `/etc/sudoers.d/`. It uses the `visudo` command so that we get
+#  correct permissions and a syntax check.
+#
+#  Note that this will overwrite any existing sudoers file of the same
+#  name. I strongly suggest you use etckeeper or similar to be able to
+#  recover from such errors.
+#
+#  Bugs: This will fail if the sudoers file you're trying to install has
+#  a single period (`.`) alone on a line.
+#
+
+sudoers_d=/etc/sudoers.d
+
+eecho() { echo 1>&2 "$@"; }
+err()   { eecho "$@"; exit 1; }
+
+[ -d $sudoers_d ] || err "Cannot find directory $sudoers_d."
+[ -z "$1" ] && { eecho "Usage: $(basename $0) <sudoers-file> ..."; exit 2; }
+
+export VISUAL=ex
+unset EDITOR
+
+sudo -v
+for path in "$@"; do
+    [ -r "$path" ] || err "Cannot read $path"
+    filename="$(basename "$path")"
+    (
+        echo '1,$d'
+        echo i
+        cat "$path"
+        echo .
+        echo wq
+    ) | sudo VISUAL=ex visudo -f "$sudoers_d/$filename"
+    # Would you believe it? Many Linux systems these days
+    # don't have ed(1) installed!
+done
