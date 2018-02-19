@@ -18,6 +18,8 @@
 
 Defaults:%wheel,%sudo       !always_set_home
 Defaults:%wheel,%sudo       env_keep += "HOME"
+Defaults:%wheel,%sudo       env_keep += "EDITOR VISUAL PAGER LESS SYSTEMD_LESS"
+
 
 # Handy for those who use Vagrant or Kitchen for testing, since the
 # vagrant user is not added to the wheel/sudo groups.
